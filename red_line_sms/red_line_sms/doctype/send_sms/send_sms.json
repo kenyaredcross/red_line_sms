@@ -1,6 +1,6 @@
 {
  "actions": [],
- "allow_rename": 1,
+ "autoname": "format:SMS{YY}-{#####}",
  "creation": "2025-07-15 20:06:48.556494",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -11,7 +11,9 @@
   "phone_numbers",
   "message",
   "status",
-  "log"
+  "log",
+  "delivery_log",
+  "created_on"
  ],
  "fields": [
   {
@@ -61,16 +63,31 @@
    "fieldtype": "Long Text",
    "label": "Response Log",
    "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.status === \"Sent\";",
+   "fieldname": "delivery_log",
+   "fieldtype": "Table",
+   "label": "SMS Delivery Log",
+   "options": "SMS Log Detail"
+  },
+  {
+   "default": "now",
+   "fieldname": "created_on",
+   "fieldtype": "Datetime",
+   "label": "Created On",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-15 20:14:14.521226",
+ "modified": "2025-07-15 23:41:04.706060",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Send SMS",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
