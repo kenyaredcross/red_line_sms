@@ -64,7 +64,7 @@
    "default": "Draft",
    "fieldname": "status",
    "fieldtype": "Select",
-   "label": "Status",
+   "label": "Status Send",
    "options": "Draft\nSent\nFailed",
    "read_only": 1
   },
@@ -140,7 +140,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-23 19:42:55.297522",
+ "modified": "2025-07-24 17:13:03.950100",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Send SMS",
