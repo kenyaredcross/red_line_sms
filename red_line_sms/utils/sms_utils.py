@@ -12,6 +12,7 @@ def get_sms_settings():
         username = settings.username
         api_key = settings.api_key
         sender_id = settings.sender_id or "REDCROSS"
+        
         # api_key = get_decrypted_password("RedLine SMS Settings", "api_key")
 
         if not (username and api_key):
