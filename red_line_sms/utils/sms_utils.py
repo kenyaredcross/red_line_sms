@@ -1,4 +1,3 @@
-import africastalking
 import frappe
 
 def get_credentials():
@@ -8,6 +7,9 @@ def get_credentials():
     )
 
 def init_africastalking():
+    # Import inside function to avoid breaking app installation
+    import africastalking
+
     username, api_key = get_credentials()
     africastalking.initialize(username, api_key)
     return africastalking.SMS
@@ -37,14 +39,16 @@ def send_sms(phone_numbers, message, sender_id="REDCROSS"):
             status = r.get("status")
             code = r.get("statusCode")
             cost_str = r.get("cost", "KES 0.00")
-            cost = float(cost_str.replace("KES", "").strip())
+            try:
+                cost = float(cost_str.replace("KES", "").strip())
+            except:
+                cost = 0.0
 
-            # Tally by status
             if status == "Success" or code == 100:
                 summary["success"] += 1
-            elif code in (400, 401):  # Blacklisted or blocked
+            elif code in (400, 401):
                 summary["blacklisted"] += 1
-            elif code == 102:  # Failed
+            elif code == 102:
                 summary["failed"] += 1
             else:
                 summary["unknown"] += 1
