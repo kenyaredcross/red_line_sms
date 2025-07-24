@@ -8,12 +8,21 @@
   "section_break_vtpz",
   "amended_from",
   "receiver_type",
+  "column_break_xxpa",
+  "created_on",
+  "status",
+  "filters_section",
+  "county",
+  "project",
+  "column_break_cvpu",
+  "contact_group",
+  "tag",
+  "section_break_qdxy",
   "phone_numbers",
   "message",
-  "status",
+  "section_break_dfvb",
   "log",
-  "delivery_log",
-  "created_on"
+  "delivery_log"
  ],
  "fields": [
   {
@@ -46,8 +55,9 @@
   },
   {
    "fieldname": "message",
-   "fieldtype": "Text",
+   "fieldtype": "Small Text",
    "label": "Message",
+   "placeholder": "SMS",
    "reqd": 1
   },
   {
@@ -60,7 +70,7 @@
   },
   {
    "fieldname": "log",
-   "fieldtype": "Long Text",
+   "fieldtype": "Small Text",
    "label": "Response Log",
    "read_only": 1
   },
@@ -77,13 +87,60 @@
    "fieldtype": "Datetime",
    "label": "Created On",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_xxpa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_qdxy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval:doc.receiver_type === \"Red Profile\";",
+   "fieldname": "filters_section",
+   "fieldtype": "Section Break",
+   "label": "Filters"
+  },
+  {
+   "depends_on": "eval:doc.receiver_type === \"Red Profile\";",
+   "fieldname": "county",
+   "fieldtype": "Table MultiSelect",
+   "label": "County",
+   "options": "County Link"
+  },
+  {
+   "fieldname": "contact_group",
+   "fieldtype": "Table MultiSelect",
+   "label": "Contact Group",
+   "options": "Red Profile Group Membership"
+  },
+  {
+   "fieldname": "section_break_dfvb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "tag",
+   "fieldtype": "Table MultiSelect",
+   "label": "Tag",
+   "options": "Red Profile Tag"
+  },
+  {
+   "fieldname": "column_break_cvpu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Table MultiSelect",
+   "label": "Project",
+   "options": "Project Link"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-15 23:41:04.706060",
+ "modified": "2025-07-23 19:42:55.297522",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Send SMS",

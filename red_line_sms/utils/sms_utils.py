@@ -13,9 +13,14 @@ def init_africastalking():
     return africastalking.SMS
 
 def send_sms(phone_numbers, message, sender_id="REDCROSS"):
+    """
+    Sends SMS to a list of phone numbers using Africa's Talking.
+    Returns a dict with summary, detailed recipient logs, and raw response.
+    """
     try:
         sms = init_africastalking()
         raw_response = sms.send(message, phone_numbers, sender_id)
+
         recipients = raw_response.get("SMSMessageData", {}).get("Recipients", [])
 
         detailed_log = []
@@ -35,11 +40,9 @@ def send_sms(phone_numbers, message, sender_id="REDCROSS"):
             cost = float(cost_str.replace("KES", "").strip())
 
             # Tally by status
-            if status == "Success":
+            if status == "Success" or code == 100:
                 summary["success"] += 1
-            elif code == 100:  # Queued
-                summary["success"] += 1
-            elif code in (400, 401):  # Blacklisted, blocked
+            elif code in (400, 401):  # Blacklisted or blocked
                 summary["blacklisted"] += 1
             elif code == 102:  # Failed
                 summary["failed"] += 1
