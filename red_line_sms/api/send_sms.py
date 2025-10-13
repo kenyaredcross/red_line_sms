@@ -9,8 +9,11 @@ from red_line_sms.utils.profile_utils import get_filtered_red_profiles
 def send_sms_for_doc(docname):
     doc = frappe.get_doc("Send SMS", docname)
 
-    if doc.status != "Draft":
-        frappe.throw(_("SMS already sent or invalid status."))
+    # if doc.status != "Draft":
+    #     frappe.throw(_("SMS already sent or invalid status."))
+
+    # if doc.workflow_status != "Approved":
+    #     frappe.throw(_("Message(s) will be only sent upon full approval"))
 
     phones = []
 
@@ -66,9 +69,26 @@ def send_sms_for_doc(docname):
   Unknown: {summary.get("unknown", 0)}
   Total Cost: KES {summary.get("cost_total", 0.0):.2f}
 """
+    doc.total_sent_sms = summary.get("total", 0)
 
     # ✅ Enable update after submit
     doc.flags.ignore_validate_update_after_submit = True
     doc.save(ignore_permissions=True)
 
     return response
+
+def workflow_send_sms_on_approval (doc, method = None):
+
+    if doc.workflow_state == "Approved":
+        doc.submit()
+
+        if doc.status != "Sent":
+            # frappe.logger().info(f'Workflow approved for {doc.name}, sending SMS.')
+            send_sms_for_doc(doc.name)
+            doc.reload()
+
+
+    # if doc.workflow_state == "Approved" and doc.status != "Sent":
+    #     # doc.docstatus = 1
+    #     frappe.logger().info(f'Workflow approved for {doc.name}, sending SMS.')
+    #     send_sms_for_doc(doc.name)

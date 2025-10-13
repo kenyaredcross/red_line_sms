@@ -10,7 +10,9 @@
   "receiver_type",
   "column_break_xxpa",
   "created_on",
+  "to_be_sent_on",
   "status",
+  "workflow_state",
   "filters_section",
   "county",
   "project",
@@ -22,7 +24,8 @@
   "message",
   "section_break_dfvb",
   "log",
-  "delivery_log"
+  "delivery_log",
+  "total_sent_sms"
  ],
  "fields": [
   {
@@ -134,13 +137,30 @@
    "fieldtype": "Table MultiSelect",
    "label": "Project",
    "options": "Project Link"
+  },
+  {
+   "default": "Now",
+   "fieldname": "to_be_sent_on",
+   "fieldtype": "Datetime",
+   "label": "To be Sent On"
+  },
+  {
+   "fieldname": "workflow_state",
+   "fieldtype": "Data",
+   "label": "Approval Status",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_sent_sms",
+   "fieldtype": "Int",
+   "label": "Total Sent SMS"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-24 17:13:03.950100",
+ "modified": "2025-10-08 04:48:11.604724",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Send SMS",
@@ -161,11 +181,38 @@
    "share": 1,
    "submit": 1,
    "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "SMS Sender",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "SMS Approver",
+   "share": 1,
+   "write": 1
   }
  ],
  "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
- "track_changes": 1
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
 }

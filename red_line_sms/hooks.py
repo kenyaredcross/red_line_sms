@@ -237,3 +237,9 @@ app_license = "mit"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+
+doc_events = {
+    "Send SMS": {
+        "on_update": "red_line_sms.api.send_sms.workflow_send_sms_on_approval"
+    }
+}
