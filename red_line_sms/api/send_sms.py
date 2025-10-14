@@ -26,8 +26,10 @@ def send_sms_for_doc(docname):
         filters = {
             "counties": [x.county for x in doc.county],
             "contact_groups": [x.contact_group for x in doc.contact_group],
-            "tags": doc.tag or [],
-            "projects": doc.project or []
+            # "tags": [x.tag for x in doc.tag],
+            "projects": [x.project for x in doc.project],
+            "tags": doc.tag or []
+            # "projects": doc.project or []
         }
         red_profiles = get_filtered_red_profiles(filters)
         phones = [x.phone for x in red_profiles if x.phone]
@@ -35,7 +37,7 @@ def send_sms_for_doc(docname):
     elif doc.receiver_type == "Contact":
         contacts = frappe.get_all("Contact", fields=["phone"])
         phones = [x.phone for x in contacts if x.phone]
-
+    
     else:
         frappe.throw(_("Invalid recipient type."))
 
@@ -70,6 +72,9 @@ def send_sms_for_doc(docname):
   Total Cost: KES {summary.get("cost_total", 0.0):.2f}
 """
     doc.total_sent_sms = summary.get("total", 0)
+    doc.total_cost = summary.get("cost_total", 0.0)
+    doc.total_failed = summary.get("failed", 0)
+
 
     # ✅ Enable update after submit
     doc.flags.ignore_validate_update_after_submit = True

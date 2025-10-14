@@ -8,10 +8,10 @@
   "section_break_vtpz",
   "amended_from",
   "receiver_type",
+  "status",
   "column_break_xxpa",
   "created_on",
   "to_be_sent_on",
-  "status",
   "workflow_state",
   "filters_section",
   "county",
@@ -23,9 +23,13 @@
   "phone_numbers",
   "message",
   "section_break_dfvb",
-  "log",
   "delivery_log",
-  "total_sent_sms"
+  "section_break_vbyg",
+  "log",
+  "column_break_zjac",
+  "total_sent_sms",
+  "total_failed",
+  "total_cost"
  ],
  "fields": [
   {
@@ -51,12 +55,14 @@
    "reqd": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "depends_on": "eval:doc.receiver_type === 'Manual Entry';",
    "fieldname": "phone_numbers",
    "fieldtype": "Small Text",
    "label": "Phone Numbers"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "message",
    "fieldtype": "Small Text",
    "label": "Message",
@@ -106,6 +112,7 @@
    "label": "Filters"
   },
   {
+   "allow_in_quick_entry": 1,
    "depends_on": "eval:doc.receiver_type === \"Red Profile\";",
    "fieldname": "county",
    "fieldtype": "Table MultiSelect",
@@ -113,6 +120,7 @@
    "options": "County Link"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "contact_group",
    "fieldtype": "Table MultiSelect",
    "label": "Contact Group",
@@ -123,6 +131,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "tag",
    "fieldtype": "Table MultiSelect",
    "label": "Tag",
@@ -133,12 +142,14 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "project",
    "fieldtype": "Table MultiSelect",
    "label": "Project",
    "options": "Project Link"
   },
   {
+   "allow_in_quick_entry": 1,
    "default": "Now",
    "fieldname": "to_be_sent_on",
    "fieldtype": "Datetime",
@@ -153,14 +164,35 @@
   {
    "fieldname": "total_sent_sms",
    "fieldtype": "Int",
-   "label": "Total Sent SMS"
+   "label": "Total Sent SMS",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_vbyg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_zjac",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_failed",
+   "fieldtype": "Int",
+   "label": "Total Failed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Float",
+   "label": "Total Cost",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-08 04:48:11.604724",
+ "modified": "2025-10-14 06:43:50.511411",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Send SMS",
