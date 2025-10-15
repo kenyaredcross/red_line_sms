@@ -245,3 +245,12 @@ doc_events = {
         "on_update": "red_line_sms.api.send_sms.workflow_send_sms_on_approval"
     }
 }
+
+scheduler_events = {
+    "cron": {
+        # Run every 5 minutes
+        "* * * * *": [
+            "red_line_sms.utils.tasks.process_scheduled_sms"
+        ]
+    }
+}

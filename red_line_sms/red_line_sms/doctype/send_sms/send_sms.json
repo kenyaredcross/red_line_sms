@@ -74,7 +74,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status Send",
-   "options": "Draft\nSent\nFailed",
+   "options": "Draft\nSent\nScheduled\nFailed",
    "read_only": 1
   },
   {
@@ -150,10 +150,10 @@
   },
   {
    "allow_in_quick_entry": 1,
-   "default": "Now",
    "fieldname": "to_be_sent_on",
    "fieldtype": "Datetime",
-   "label": "To be Sent On"
+   "label": "To be Sent On",
+   "reqd": 1
   },
   {
    "fieldname": "workflow_state",
@@ -192,7 +192,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-14 06:43:50.511411",
+ "modified": "2025-10-15 05:10:52.895158",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Send SMS",

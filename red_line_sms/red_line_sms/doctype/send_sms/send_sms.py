@@ -1,10 +1,24 @@
 import frappe
 from frappe.model.document import Document
+from frappe.utils import now_datetime
 from red_line_sms.api.send_sms import send_sms_for_doc
 
 class SendSMS(Document):
     def on_submit(self):
-        send_sms_for_doc(self.name)
+        # send_sms_for_doc(self.name)
+        # If scheduled time exists, enque the SMS
+        if not self.to_be_sent_on or self.to_be_sent_on <= now_datetime():
+            frappe.logger().info(f"Submiting {self.name}: sending SMS immediately.")
+            send_sms_for_doc(self.name)
+        else:
+            frappe.logger().info(f"Submistting {self.name}: scheduled for {self.to_be_sent_on}")
+
+
+
+
+
+
+        # send_sms_for_doc(self.name) 
         
 
     # def on_update(self):

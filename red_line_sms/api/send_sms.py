@@ -44,6 +44,8 @@ def send_sms_for_doc(docname):
     if not phones:
         frappe.throw(_("No phone numbers found. SMS will not be sent."))
 
+      
+
     # Send SMS
     response = send_sms(phones, doc.message)
 
@@ -81,19 +83,13 @@ def send_sms_for_doc(docname):
     doc.save(ignore_permissions=True)
 
     return response
+# Only Send SMS if Workflow has been fully approved
 
 def workflow_send_sms_on_approval (doc, method = None):
 
-    if doc.workflow_state == "Approved":
-        doc.submit()
+    if doc.workflow_state == "Approved" and doc.status != "Sent":
+        # Check if scheduled
+        if doc.to_be_sent_on and doc.to_be_sent_on > now_datetime():
+            doc.status = "Scheduled"
 
-        if doc.status != "Sent":
-            # frappe.logger().info(f'Workflow approved for {doc.name}, sending SMS.')
-            send_sms_for_doc(doc.name)
-            doc.reload()
-
-
-    # if doc.workflow_state == "Approved" and doc.status != "Sent":
-    #     # doc.docstatus = 1
-    #     frappe.logger().info(f'Workflow approved for {doc.name}, sending SMS.')
-    #     send_sms_for_doc(doc.name)
+        doc.submit()                    
