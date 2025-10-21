@@ -162,6 +162,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval: doc.status == \"Sent\" || doc.status == \"Failed\";",
    "fieldname": "total_sent_sms",
    "fieldtype": "Int",
    "label": "Total Sent SMS",
@@ -176,12 +177,14 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval: doc.status == \"Sent\" || doc.status == \"Failed\";",
    "fieldname": "total_failed",
    "fieldtype": "Int",
    "label": "Total Failed",
    "read_only": 1
   },
   {
+   "depends_on": "eval: doc.status == \"Sent\" || doc.status == \"Failed\";",
    "fieldname": "total_cost",
    "fieldtype": "Float",
    "label": "Total Cost",
@@ -192,7 +195,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-15 05:10:52.895158",
+ "modified": "2025-10-15 05:26:56.778580",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Send SMS",

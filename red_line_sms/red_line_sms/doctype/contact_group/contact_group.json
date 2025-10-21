@@ -8,8 +8,7 @@
  "field_order": [
   "group_name",
   "description",
-  "group_members",
-  "reference"
+  "group_members"
  ],
  "fields": [
   {
@@ -30,19 +29,12 @@
    "fieldtype": "Table",
    "label": "Group Members",
    "options": "Contact Group Member"
-  },
-  {
-   "fieldname": "reference",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Reference",
-   "options": "API Request Log"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-23 19:29:19.825011",
+ "modified": "2025-10-21 04:12:11.483747",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Contact Group",
