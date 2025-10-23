@@ -34,7 +34,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-21 04:12:11.483747",
+ "modified": "2025-10-21 04:54:38.691710",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Contact Group",
@@ -58,5 +58,6 @@
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
- "title_field": "group_name"
+ "title_field": "group_name",
+ "track_changes": 1
 }
