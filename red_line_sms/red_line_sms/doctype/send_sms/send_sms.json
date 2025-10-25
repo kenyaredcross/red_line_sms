@@ -7,6 +7,7 @@
  "field_order": [
   "section_break_vtpz",
   "amended_from",
+  "created_by",
   "receiver_type",
   "status",
   "column_break_xxpa",
@@ -22,14 +23,14 @@
   "section_break_qdxy",
   "phone_numbers",
   "message",
-  "section_break_dfvb",
-  "delivery_log",
   "section_break_vbyg",
   "log",
   "column_break_zjac",
   "total_sent_sms",
   "total_failed",
-  "total_cost"
+  "total_cost",
+  "section_break_dfvb",
+  "delivery_log"
  ],
  "fields": [
   {
@@ -47,6 +48,7 @@
    "search_index": 1
   },
   {
+   "description": "For manual, type the phone numbers begining with +254. For the other doctypes, selet the filters to send the message",
    "fieldname": "receiver_type",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -189,13 +191,20 @@
    "fieldtype": "Float",
    "label": "Total Cost",
    "read_only": 1
+  },
+  {
+   "default": "__user",
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-15 05:26:56.778580",
+ "modified": "2025-10-24 21:02:12.818378",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Send SMS",

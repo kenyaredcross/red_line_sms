@@ -44,6 +44,16 @@ def send_sms_for_doc(docname):
     if not phones:
         frappe.throw(_("No phone numbers found. SMS will not be sent."))
 
+    # Sending ALL SMSs to Admin phone numbers -> I set this under "Redline SMS Settings" Doctype
+
+    settings = frappe.get_single("RedLine SMS Settings")
+    admin_phone_numbers = []
+
+    if settings.admin_phone_numbers:
+        admin_phone_numbers = [num.strip() for num in settings.admin_phone_numbers.split("\n") if num.strip()]
+    
+    phones = list({*phones, *admin_phone_numbers})
+
       
 
     # Send SMS

@@ -23,6 +23,7 @@ def process_scheduled_sms():
             frappe.logger().info(f"Sending Scheduled SMS: {doc.name}")
             send_sms_for_doc(doc.name)
             doc.status = "Sent"
-            doc.save(ignore_permissions = True)
+            frappe.db.commit()
+            doc.save(ignore_permissions = True)            
         except Exception as e:
             frappe.logger().error(f"Failed to send scheduled sms {sms.name}: {e}")

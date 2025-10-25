@@ -246,11 +246,11 @@ doc_events = {
     }
 }
 
-# scheduler_events = {
-#     "cron": {
-#         # Run every 5 minutes
-#         "* * * * *": [
-#             "red_line_sms.utils.tasks.process_scheduled_sms"
-#         ]
-#     }
-# }
+scheduler_events = {
+    "cron": {
+        # Run every 5 minutes
+        "* * * * *": [
+            "red_line_sms.utils.tasks.process_scheduled_sms"
+        ]
+    }
+}
