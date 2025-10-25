@@ -3,14 +3,14 @@
 
 frappe.ui.form.on("Send SMS", {
 	refresh(frm) {
-        check_sms_length(frm);
+        // check_sms_length(frm);
 	},
     validate: function (frm) {
         // check_sms_length(frm);
         
     },
     message: function(frm) {
-        check_sms_length(frm);
+        // check_sms_length(frm);
     }
 });
 
