@@ -6,7 +6,7 @@ frappe.ui.form.on("Send SMS", {
         check_sms_length(frm);
 	},
     validate: function (frm) {
-        check_sms_length(frm);
+        // check_sms_length(frm);
         
     },
     message: function(frm) {
@@ -16,7 +16,7 @@ frappe.ui.form.on("Send SMS", {
 
 function check_sms_length (frm) {
     if (frm.doc.message && frm.doc.message.length > 160){
-            ftappe.throw(__("The SMS cannot exceed 160 characters"));
+             frappe.throw(__("The SMS cannot exceed 160 characters"));
         };
 };
 
