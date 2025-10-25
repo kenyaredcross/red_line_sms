@@ -3,20 +3,20 @@
 
 frappe.ui.form.on("Send SMS", {
 	refresh(frm) {
-        // check_sms_length(frm);
+        check_sms_length(frm);
 	},
     validate: function (frm) {
-        // check_sms_length(frm);
+        check_sms_length(frm);
         
     },
     message: function(frm) {
-        // check_sms_length(frm);
+        check_sms_length(frm);
     }
 });
 
 function check_sms_length (frm) {
     if (frm.doc.message && frm.doc.message.length > 160){
-             frappe.throw(__("The SMS cannot exceed 160 characters"));
+             frappe.throw(__(`The SMS cannot exceed 160 characters, your current count is ${frm.doc.message.length}`));
         };
 };
 
