@@ -66,11 +66,14 @@ def send_sms_for_doc(docname):
     doc.status = "Sent" if summary.get("success", 0) > 0 else "Failed"
 
     for d in details:
+        from red_line_sms.utils.sms_utils import sanitize_cost_currency
+        
         doc.append("delivery_log", {
             "phone_number": d.get("number"),
             "status": d.get("status"),
             "status_code": d.get("status_code"),
-            "cost": float(d["cost"].replace("KES", "").strip()) if d.get("cost") else 0.0,
+            # "cost": float(d["cost"].replace("KES", "").strip()) if d.get("cost") else 0.0,
+            "cost": float(sanitize_cost_currency(d.get("cost").strip())) if d.get("cost") else 0.0,
             "message_id": d.get("message_id"),
             "timestamp": now_datetime()
         })

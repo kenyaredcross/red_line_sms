@@ -67,7 +67,13 @@ def send_sms(phone_numbers, message, sender_id=None):
             code = r.get("statusCode")
             cost_str = r.get("cost", "KES 0.00")
             try:
-                cost = float(cost_str.replace("KES", "").strip())
+                
+                # cost = float(cost_str.replace("KES", "").strip())
+
+                cost_1 = cost.split(" ", 1)
+
+                cost = float(cost_1[1])
+
             except:
                 cost = 0.0
 
@@ -99,3 +105,13 @@ def send_sms(phone_numbers, message, sender_id=None):
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Africa's Talking SMS Error")
         return {"status": "error", "error": str(e)}
+
+
+def sanitize_cost_currency(cst):
+    # cost_st = details.get("cost")
+
+    cst_str = cst.split(" ", 1)
+    cost = float(cst_str[1])
+
+    return cost
+

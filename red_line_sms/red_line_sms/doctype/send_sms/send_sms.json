@@ -23,6 +23,7 @@
   "section_break_qdxy",
   "phone_numbers",
   "message",
+  "character_count",
   "section_break_vbyg",
   "log",
   "column_break_zjac",
@@ -198,13 +199,18 @@
    "fieldtype": "Link",
    "label": "Created By",
    "options": "User"
+  },
+  {
+   "fieldname": "character_count",
+   "fieldtype": "HTML",
+   "label": "Character Count"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-24 21:02:12.818378",
+ "modified": "2025-10-26 15:55:45.111183",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Send SMS",
