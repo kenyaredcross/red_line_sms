@@ -24,7 +24,7 @@ def get_sms_data(limit = 100):
         sms_data = frappe.db.get_all(
             "Send SMS", 
             fields = ["name", "created_by", "created_on", "to_be_sent_on", "workflow_state", "status",
-                "recipient_source", "county", "contact_group", "project", "tag","phone_numbers", "message",
+                "recipient_type", "county", "contact_group", "project", "tag","phone_numbers", "message",
                 "character_count", "response_log", "total_sent_sms",
                 "total_failed", "total_cost",
             ],
