@@ -1,0 +1,40 @@
+import frappe
+
+@frappe.whitelist(allow_guest = False)
+def get_sms_data(limit = 100):
+
+    try:
+        limit = int(limit)
+
+
+        sms_data = frappe.db.get_all(
+            "Send SMS", 
+            fields = ["name", "created_by", "created_on", "to_be_sent_on", "approval_status", "status_send",
+                "recipient_source", "county", "contact_group", "project", "tag","phone_numbers", "message",
+                "character_count", "response_log", "total_sent_sms",
+                "total_failed", "total_cost",
+            ],
+            limit = limit, 
+            order_by="modified desc"
+        )
+
+        for log in sms_data:
+            
+            log["delivery_log"] = frappe.db.get_all(
+                "SMS Log Detail", 
+                filters = {"parent": log["name"]},
+                fields = ["phone_number", "status", "cost", "status_code", "message_id", "timestamp",
+                    ]
+            )
+
+        return {"success": True, "data": sms_data}
+
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "API ")
+        return {"success": False, "error": str(e)}
+
+    
+
+
+
+    
