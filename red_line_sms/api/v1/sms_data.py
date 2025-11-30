@@ -25,7 +25,7 @@ def get_sms_data(limit = 100):
             "Send SMS", 
             fields = ["name", "created_by", "created_on", "to_be_sent_on", "workflow_state", "status",
                 "receiver_type", "phone_numbers", "message",
-                 "response_log", "total_sent_sms",
+                 "log", "total_sent_sms",
                 "total_failed", "total_cost",
             ],
             limit = limit, 
