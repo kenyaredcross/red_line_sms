@@ -1,5 +1,19 @@
 import frappe
 
+from frappe.utils import strip_html
+
+def sanitize_output(data):
+
+    if isinstance(data, dict):
+        return {key : sanitize_output(value) for key, value in data.items() }
+    
+
+    elif isinstance(data, list): 
+        return [sanitize_output(i) for i in data]
+
+    elif isinstance(data, str):
+        return strip_html(data).strip()
+
 @frappe.whitelist(allow_guest = False)
 def get_sms_data(limit = 100):
 
@@ -26,6 +40,9 @@ def get_sms_data(limit = 100):
                 fields = ["phone_number", "status", "cost", "status_code", "message_id", "timestamp",
                     ]
             )
+        
+
+        sms_data = sanitize_output(sms_data)
 
         return {"success": True, "data": sms_data}
 
