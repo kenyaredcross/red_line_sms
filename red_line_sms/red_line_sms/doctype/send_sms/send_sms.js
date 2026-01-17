@@ -2,16 +2,16 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Send SMS", {
-	refresh(frm) {
-        check_sms_length(frm);
-	},
-    validate: function (frm) {
-        check_sms_length(frm);
+	// refresh(frm) {
+    //     check_sms_length(frm);
+	// },
+    // validate: function (frm) {
+    //     check_sms_length(frm);
         
-    },
-    message: function(frm) {
-        check_sms_length(frm);
-    }
+    // },
+    // message: function(frm) {
+    //     check_sms_length(frm);
+    // }
 });
 
 function check_sms_length (frm) {
