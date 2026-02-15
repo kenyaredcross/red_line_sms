@@ -105,6 +105,25 @@ def workflow_send_sms_on_approval(doc, method=None):
 
 
 @frappe.whitelist()
+def get_contact_count(mapping_name, filters=None):
+	"""Return the count of matching contacts and estimated cost for preview."""
+	import json
+
+	if isinstance(filters, str):
+		filters = json.loads(filters)
+
+	contacts = get_filtered_contacts(mapping_name, filters or [])
+	count = len(contacts)
+	cost_per_sms = 0.50  # KES per SMS, default Africa's Talking rate
+	estimated_cost = count * cost_per_sms
+
+	return {
+		"count": count,
+		"estimated_cost": estimated_cost,
+	}
+
+
+@frappe.whitelist()
 def get_filterable_fields(doctype_name):
 	"""Return fields from a doctype that can be used as filters."""
 	frappe.has_permission("SMS Contact Mapping", throw=True)

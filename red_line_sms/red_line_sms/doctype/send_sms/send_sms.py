@@ -3,20 +3,30 @@ from frappe.model.document import Document
 from frappe.utils import now_datetime
 from red_line_sms.api.send_sms import send_sms_for_doc
 
+
 class SendSMS(Document):
+    def validate(self):
+        # Dynamically allow receiver_type values from SMS Contact Mapping
+        if self.receiver_type and self.receiver_type != "Manual Entry":
+            valid_options = ["Manual Entry"]
+            mappings = frappe.get_all(
+                "SMS Contact Mapping", pluck="mapping_name", ignore_permissions=True
+            )
+            valid_options.extend(mappings)
+
+            if self.receiver_type in valid_options:
+                # Inject the option into the field meta so Frappe validation passes
+                meta = frappe.get_meta(self.doctype)
+                field = meta.get_field("receiver_type")
+                if field:
+                    field.options = "\n".join(valid_options)
+
     def on_submit(self):
-        # send_sms_for_doc(self.name)
-        # If scheduled time exists, enque the SMS
         if not self.to_be_sent_on or self.to_be_sent_on <= now_datetime():
-            frappe.logger().info(f"Submiting {self.name}: sending SMS immediately.")
+            frappe.logger().info(f"Submitting {self.name}: sending SMS immediately.")
             send_sms_for_doc(self.name)
         else:
-            frappe.logger().info(f"Submistting {self.name}: scheduled for {self.to_be_sent_on}")
-
-
-
-
-
+            frappe.logger().info(f"Submitting {self.name}: scheduled for {self.to_be_sent_on}")
 
         # send_sms_for_doc(self.name) 
         

@@ -5,7 +5,8 @@ frappe.ui.form.on("Send SMS", {
 	refresh(frm) {
 		setup_receiver_type_options(frm);
 		setup_add_filter_button(frm);
-		check_sms_length(frm);
+		setup_character_counter(frm);
+		update_contact_preview(frm);
 	},
 
 	receiver_type(frm) {
@@ -13,8 +14,8 @@ frappe.ui.form.on("Send SMS", {
 			frm.set_value("contact_mapping", "");
 			frm.doc.sms_filters = [];
 			frm.refresh_field("sms_filters");
+			clear_contact_preview(frm);
 		} else if (frm.doc.receiver_type) {
-			// Look up the mapping by name
 			frappe.call({
 				method: "frappe.client.get_list",
 				args: {
@@ -26,10 +27,10 @@ frappe.ui.form.on("Send SMS", {
 				callback(r) {
 					if (r.message && r.message.length) {
 						frm.set_value("contact_mapping", r.message[0].name);
+						update_contact_preview(frm);
 					}
 				},
 			});
-			// Clear old filters when mapping changes
 			frm.doc.sms_filters = [];
 			frm.refresh_field("sms_filters");
 		}
@@ -53,7 +54,11 @@ function setup_receiver_type_options(frm) {
 					options.push(m.mapping_name);
 				});
 			}
-			frm.set_df_property("receiver_type", "options", options.join("\n"));
+			frm.set_df_property(
+				"receiver_type",
+				"options",
+				options.join("\n")
+			);
 			frm.refresh_field("receiver_type");
 		},
 	});
@@ -70,13 +75,12 @@ function setup_add_filter_button(frm) {
 	}
 
 	if (frm.doc.docstatus === 1) {
-		// Don't show button on submitted docs
 		return;
 	}
 
-	let btn = $(`<button class="btn btn-xs btn-default" style="margin-bottom: 10px;">
-		+ Add Filter
-	</button>`);
+	let btn = $(
+		`<button class="btn btn-xs btn-default" style="margin-bottom: 10px;">+ Add Filter</button>`
+	);
 
 	btn.on("click", function () {
 		show_filter_dialog(frm);
@@ -86,7 +90,6 @@ function setup_add_filter_button(frm) {
 }
 
 function show_filter_dialog(frm) {
-	// First get the mapping to find source doctype
 	frappe.call({
 		method: "frappe.client.get",
 		args: {
@@ -95,11 +98,12 @@ function show_filter_dialog(frm) {
 		},
 		callback(r) {
 			if (!r.message) {
-				frappe.msgprint(__("Please select a valid Recipient Source first."));
+				frappe.msgprint(
+					__("Please select a valid Recipient Source first.")
+				);
 				return;
 			}
-			let mapping = r.message;
-			fetch_and_show_fields(frm, mapping.source_doctype);
+			fetch_and_show_fields(frm, r.message.source_doctype);
 		},
 	});
 }
@@ -110,12 +114,13 @@ function fetch_and_show_fields(frm, source_doctype) {
 		args: { doctype_name: source_doctype },
 		callback(r) {
 			if (!r.message || !r.message.length) {
-				frappe.msgprint(__("No filterable fields found on {0}.", [source_doctype]));
+				frappe.msgprint(
+					__("No filterable fields found on {0}.", [source_doctype])
+				);
 				return;
 			}
 			let fields = r.message;
 
-			// Build field selection options
 			let field_options = fields.map((f) => ({
 				label: `${f.label} (${f.fieldtype})`,
 				value: f.fieldname,
@@ -152,16 +157,22 @@ function fetch_and_show_fields(frm, source_doctype) {
 					);
 					let row = frm.add_child("sms_filters");
 					row.filter_field = values.filter_field;
-					row.filter_label = field_meta ? field_meta.label : values.filter_field;
-					row.filter_fieldtype = field_meta ? field_meta.fieldtype : "Data";
-					row.filter_doctype = field_meta ? field_meta.options || "" : "";
+					row.filter_label = field_meta
+						? field_meta.label
+						: values.filter_field;
+					row.filter_fieldtype = field_meta
+						? field_meta.fieldtype
+						: "Data";
+					row.filter_doctype = field_meta
+						? field_meta.options || ""
+						: "";
 					row.filter_value = values.filter_value;
 					frm.refresh_field("sms_filters");
 					d.hide();
+					update_contact_preview(frm);
 				},
 			});
 
-			// Set display labels for the select
 			let select_field = d.fields_dict.filter_field;
 			if (select_field && select_field.$input) {
 				select_field.$input.empty();
@@ -174,10 +185,11 @@ function fetch_and_show_fields(frm, source_doctype) {
 
 			d.show();
 
-			// Trigger initial update for value field
 			let initial = d.get_value("filter_field");
 			if (initial) {
-				let field_meta = fields.find((f) => f.fieldname === initial);
+				let field_meta = fields.find(
+					(f) => f.fieldname === initial
+				);
 				update_value_field(d, field_meta);
 			}
 		},
@@ -190,7 +202,6 @@ function update_value_field(dialog, field_meta) {
 	let value_field = dialog.fields_dict.filter_value;
 
 	if (field_meta.fieldtype === "Link" && field_meta.options) {
-		// Replace with a Link field
 		value_field.df.fieldtype = "Link";
 		value_field.df.options = field_meta.options;
 		value_field.refresh();
@@ -203,9 +214,9 @@ function update_value_field(dialog, field_meta) {
 		value_field.df.options = "0\n1";
 		value_field.refresh();
 	} else if (field_meta.fieldtype === "Table MultiSelect") {
-		// For Table MultiSelect, link to the actual linked doctype (not the child table)
 		value_field.df.fieldtype = "Link";
-		value_field.df.options = field_meta.link_doctype || field_meta.options || "DocType";
+		value_field.df.options =
+			field_meta.link_doctype || field_meta.options || "DocType";
 		value_field.refresh();
 	} else {
 		value_field.df.fieldtype = "Data";
@@ -214,25 +225,97 @@ function update_value_field(dialog, field_meta) {
 	}
 }
 
-function check_sms_length(frm) {
-	if (frm.doc.message && frm.doc.message.length > 160) {
-		frappe.throw(
-			__(
-				`The SMS cannot exceed 160 characters, your current count is ${frm.doc.message.length}`
-			)
-		);
+// --- Character counter (uses the HTML field, no stacking toasts) ---
+
+function setup_character_counter(frm) {
+	let $input = frm.fields_dict.message?.$input;
+	if (!$input) return;
+
+	// Unbind previous handler to prevent stacking
+	$input.off("input.sms_counter");
+
+	$input.on("input.sms_counter", function () {
+		render_character_count(frm, $(this).val().length);
+	});
+
+	// Render current count immediately
+	render_character_count(frm, (frm.doc.message || "").length);
+}
+
+function render_character_count(frm, current_length) {
+	let wrapper = frm.fields_dict.character_count?.$wrapper;
+	if (!wrapper) return;
+
+	let max_length = 160;
+	let remaining = max_length - current_length;
+	let color = remaining < 0 ? "red" : "var(--text-muted)";
+
+	wrapper.html(
+		`<div style="font-size: 12px; color: ${color}; padding: 4px 0;">
+			Characters: ${current_length} / ${max_length} &mdash; Remaining: ${remaining >= 0 ? remaining : 0}
+		</div>`
+	);
+}
+
+// --- Contact count & cost preview ---
+
+function update_contact_preview(frm) {
+	let wrapper = frm.fields_dict.add_filter_html?.$wrapper;
+	if (!wrapper) return;
+
+	// Remove any existing preview
+	wrapper.find(".sms-contact-preview").remove();
+
+	if (
+		!frm.doc.contact_mapping ||
+		frm.doc.receiver_type === "Manual Entry"
+	) {
+		return;
 	}
 
-	if (frm.fields_dict.message && frm.fields_dict.message.$input) {
-		frm.fields_dict.message.$input.on("input", function () {
-			let current_length = $(this).val().length;
-			let max_length = 160;
-			let remaining = max_length - current_length;
+	let filters = (frm.doc.sms_filters || []).map((row) => ({
+		filter_field: row.filter_field,
+		filter_fieldtype: row.filter_fieldtype,
+		filter_doctype: row.filter_doctype,
+		filter_value: row.filter_value,
+	}));
 
-			frm.set_intro(
-				`characters used: ${current_length}/ ${max_length}. Remaining: ${remaining >= 0 ? remaining : 0}`,
-				remaining < 0 ? "red" : "blue"
-			);
-		});
+	frappe.call({
+		method: "red_line_sms.api.send_sms.get_contact_count",
+		args: {
+			mapping_name: frm.doc.contact_mapping,
+			filters: JSON.stringify(filters),
+		},
+		callback(r) {
+			if (!r.message) return;
+
+			let { count, estimated_cost } = r.message;
+			let preview_html = `
+				<div class="sms-contact-preview" style="
+					padding: 8px 12px;
+					margin-bottom: 10px;
+					background: var(--bg-light-gray, #f5f7fa);
+					border-radius: 6px;
+					font-size: 13px;
+				">
+					<strong>${count}</strong> contact${count !== 1 ? "s" : ""} selected
+					&mdash; Estimated cost: <strong>KES ${estimated_cost.toFixed(2)}</strong>
+				</div>
+			`;
+			// Insert after the button (or at the end if no button)
+			let existing = wrapper.find(".sms-contact-preview");
+			if (existing.length) {
+				existing.replaceWith(preview_html);
+			} else {
+				wrapper.append(preview_html);
+			}
+		},
+	});
+}
+
+function clear_contact_preview(frm) {
+	let wrapper = frm.fields_dict.add_filter_html?.$wrapper;
+	if (wrapper) {
+		wrapper.find(".sms-contact-preview").remove();
 	}
 }
