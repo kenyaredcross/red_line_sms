@@ -1,0 +1,90 @@
+{
+ "actions": [],
+ "autoname": "field:mapping_name",
+ "creation": "2026-02-15 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "mapping_name",
+  "source_doctype",
+  "phone_field",
+  "column_break_opts",
+  "name_field",
+  "active_filter_field",
+  "active_filter_value"
+ ],
+ "fields": [
+  {
+   "fieldname": "mapping_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Mapping Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "source_doctype",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Source DocType",
+   "options": "DocType",
+   "reqd": 1
+  },
+  {
+   "description": "Fieldname on the source doctype that contains the phone number",
+   "fieldname": "phone_field",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Phone Field",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_opts",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Fieldname for the contact's display name (optional)",
+   "fieldname": "name_field",
+   "fieldtype": "Data",
+   "label": "Name Field"
+  },
+  {
+   "description": "Fieldname used to filter active/inactive records (e.g. is_active)",
+   "fieldname": "active_filter_field",
+   "fieldtype": "Data",
+   "label": "Active Filter Field"
+  },
+  {
+   "description": "Value that means the record is active (e.g. 1, Active, Yes)",
+   "fieldname": "active_filter_value",
+   "fieldtype": "Data",
+   "label": "Active Filter Value"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-02-15 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Red Line Sms",
+ "name": "SMS Contact Mapping",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

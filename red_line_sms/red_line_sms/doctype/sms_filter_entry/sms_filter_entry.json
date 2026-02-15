@@ -1,0 +1,63 @@
+{
+ "actions": [],
+ "creation": "2026-02-15 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "filter_field",
+  "filter_label",
+  "filter_fieldtype",
+  "filter_doctype",
+  "filter_value"
+ ],
+ "fields": [
+  {
+   "fieldname": "filter_field",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Field",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "filter_label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Label",
+   "read_only": 1
+  },
+  {
+   "fieldname": "filter_fieldtype",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Field Type"
+  },
+  {
+   "fieldname": "filter_doctype",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Filter DocType"
+  },
+  {
+   "fieldname": "filter_value",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Value",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-02-15 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Red Line Sms",
+ "name": "SMS Filter Entry",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 0
+}

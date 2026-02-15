@@ -15,11 +15,9 @@
   "to_be_sent_on",
   "workflow_state",
   "filters_section",
-  "county",
-  "project",
-  "column_break_cvpu",
-  "contact_group",
-  "tag",
+  "contact_mapping",
+  "add_filter_html",
+  "sms_filters",
   "section_break_qdxy",
   "phone_numbers",
   "message",
@@ -49,12 +47,12 @@
    "search_index": 1
   },
   {
-   "description": "For manual, type the phone numbers begining with +254. For the other doctypes, selet the filters to send the message",
+   "description": "For manual entry, type the phone numbers beginning with +254. For other sources, select the contact mapping and add filters.",
    "fieldname": "receiver_type",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Recipient Source",
-   "options": "Manual Entry\nRed Profile\nContact",
+   "options": "Manual Entry",
    "reqd": 1
   },
   {
@@ -109,47 +107,36 @@
    "fieldtype": "Section Break"
   },
   {
-   "depends_on": "eval:doc.receiver_type === \"Red Profile\";",
+   "depends_on": "eval:doc.receiver_type && doc.receiver_type !== 'Manual Entry';",
    "fieldname": "filters_section",
    "fieldtype": "Section Break",
    "label": "Filters"
   },
   {
-   "allow_in_quick_entry": 1,
-   "depends_on": "eval:doc.receiver_type === \"Red Profile\";",
-   "fieldname": "county",
-   "fieldtype": "Table MultiSelect",
-   "label": "County",
-   "options": "County Link"
+   "depends_on": "eval:doc.receiver_type && doc.receiver_type !== 'Manual Entry';",
+   "fieldname": "contact_mapping",
+   "fieldtype": "Link",
+   "label": "Contact Mapping",
+   "options": "SMS Contact Mapping",
+   "read_only": 1,
+   "hidden": 1
   },
   {
-   "allow_in_quick_entry": 1,
-   "fieldname": "contact_group",
-   "fieldtype": "Table MultiSelect",
-   "label": "Contact Group",
-   "options": "Red Profile Group Membership"
+   "depends_on": "eval:doc.receiver_type && doc.receiver_type !== 'Manual Entry';",
+   "fieldname": "add_filter_html",
+   "fieldtype": "HTML",
+   "label": "Add Filter"
+  },
+  {
+   "depends_on": "eval:doc.receiver_type && doc.receiver_type !== 'Manual Entry';",
+   "fieldname": "sms_filters",
+   "fieldtype": "Table",
+   "label": "Filters",
+   "options": "SMS Filter Entry"
   },
   {
    "fieldname": "section_break_dfvb",
    "fieldtype": "Section Break"
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "fieldname": "tag",
-   "fieldtype": "Table MultiSelect",
-   "label": "Tag",
-   "options": "Red Profile Tag"
-  },
-  {
-   "fieldname": "column_break_cvpu",
-   "fieldtype": "Column Break"
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "fieldname": "project",
-   "fieldtype": "Table MultiSelect",
-   "label": "Project",
-   "options": "Project Link"
   },
   {
    "allow_in_quick_entry": 1,
@@ -210,7 +197,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-26 15:55:45.111183",
+ "modified": "2026-02-15 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Red Line Sms",
  "name": "Send SMS",

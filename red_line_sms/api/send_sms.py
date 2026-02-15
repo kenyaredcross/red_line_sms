@@ -3,82 +3,83 @@ from frappe import _
 from frappe.utils import now_datetime
 
 from red_line_sms.utils.sms_utils import send_sms
-from red_line_sms.utils.profile_utils import get_filtered_red_profiles
+from red_line_sms.utils.contact_utils import get_filtered_contacts
+
+# System fields to exclude from filterable fields list
+SYSTEM_FIELDS = {
+	"name", "owner", "creation", "modified", "modified_by",
+	"docstatus", "idx", "parent", "parentfield", "parenttype",
+	"_user_tags", "_comments", "_assign", "_liked_by",
+}
+
+FILTERABLE_FIELDTYPES = {"Link", "Select", "Data", "Check", "Table MultiSelect"}
+
 
 @frappe.whitelist()
 def send_sms_for_doc(docname):
-    doc = frappe.get_doc("Send SMS", docname)
+	doc = frappe.get_doc("Send SMS", docname)
 
-    # if doc.status != "Draft":
-    #     frappe.throw(_("SMS already sent or invalid status."))
+	phones = []
 
-    # if doc.workflow_status != "Approved":
-    #     frappe.throw(_("Message(s) will be only sent upon full approval"))
+	if doc.receiver_type == "Manual Entry":
+		if not doc.phone_numbers:
+			frappe.throw(_("No phone numbers entered."))
+		phones = [x.strip() for x in doc.phone_numbers.split(",") if x.strip()]
 
-    phones = []
+	elif doc.contact_mapping:
+		# Dynamic mapping-based retrieval
+		filters = []
+		for row in (doc.sms_filters or []):
+			filters.append({
+				"filter_field": row.filter_field,
+				"filter_fieldtype": row.filter_fieldtype,
+				"filter_doctype": row.filter_doctype,
+				"filter_value": row.filter_value,
+			})
 
-    if doc.receiver_type == "Manual Entry":
-        if not doc.phone_numbers:
-            frappe.throw(_("No phone numbers entered."))
-        phones = [x.strip() for x in doc.phone_numbers.split(",") if x.strip()]
+		contacts = get_filtered_contacts(doc.contact_mapping, filters)
+		phones = [c["phone"] for c in contacts if c.get("phone")]
 
-    elif doc.receiver_type == "Red Profile":
-        filters = {
-            "counties": [x.county for x in doc.county],
-            "contact_groups": [x.contact_group for x in doc.contact_group],
-            # "tags": [x.tag for x in doc.tag],
-            "projects": [x.project for x in doc.project],
-            "tags": doc.tag or []
-            # "projects": doc.project or []
-        }
-        red_profiles = get_filtered_red_profiles(filters)
-        phones = [x.phone for x in red_profiles if x.phone]
+	else:
+		frappe.throw(_("Invalid recipient type or no contact mapping selected."))
 
-    elif doc.receiver_type == "Contact":
-        contacts = frappe.get_all("Contact", fields=["phone"])
-        phones = [x.phone for x in contacts if x.phone]
-    
-    else:
-        frappe.throw(_("Invalid recipient type."))
+	if not phones:
+		frappe.throw(_("No phone numbers found. SMS will not be sent."))
 
-    if not phones:
-        frappe.throw(_("No phone numbers found. SMS will not be sent."))
+	# Merge admin phone numbers from settings
+	try:
+		settings = frappe.get_single("RedLine SMS Settings")
+		admin_phone_numbers = []
+		if settings.admin_phone_numbers:
+			admin_phone_numbers = [
+				num.strip() for num in settings.admin_phone_numbers.split("\n") if num.strip()
+			]
+		phones = list({*phones, *admin_phone_numbers})
+	except Exception:
+		pass
 
-    # Sending ALL SMSs to Admin phone numbers -> I set this under "Redline SMS Settings" Doctype
+	# Send SMS
+	response = send_sms(phones, doc.message)
 
-    settings = frappe.get_single("RedLine SMS Settings")
-    admin_phone_numbers = []
+	summary = response.get("summary", {})
+	details = response.get("details", [])
 
-    if settings.admin_phone_numbers:
-        admin_phone_numbers = [num.strip() for num in settings.admin_phone_numbers.split("\n") if num.strip()]
-    
-    phones = list({*phones, *admin_phone_numbers})
+	doc.set("delivery_log", [])
+	doc.status = "Sent" if summary.get("success", 0) > 0 else "Failed"
 
-      
+	for d in details:
+		from red_line_sms.utils.sms_utils import sanitize_cost_currency
 
-    # Send SMS
-    response = send_sms(phones, doc.message)
+		doc.append("delivery_log", {
+			"phone_number": d.get("number"),
+			"status": d.get("status"),
+			"status_code": d.get("status_code"),
+			"cost": float(sanitize_cost_currency(d.get("cost", "").strip())) if d.get("cost") else 0.0,
+			"message_id": d.get("message_id"),
+			"timestamp": now_datetime(),
+		})
 
-    summary = response.get("summary", {})
-    details = response.get("details", [])
-
-    doc.set("delivery_log", [])  # clear previous logs
-    doc.status = "Sent" if summary.get("success", 0) > 0 else "Failed"
-
-    for d in details:
-        from red_line_sms.utils.sms_utils import sanitize_cost_currency
-        
-        doc.append("delivery_log", {
-            "phone_number": d.get("number"),
-            "status": d.get("status"),
-            "status_code": d.get("status_code"),
-            # "cost": float(d["cost"].replace("KES", "").strip()) if d.get("cost") else 0.0,
-            "cost": float(sanitize_cost_currency(d.get("cost").strip())) if d.get("cost") else 0.0,
-            "message_id": d.get("message_id"),
-            "timestamp": now_datetime()
-        })
-
-    doc.log = f"""\nSMS Summary:
+	doc.log = f"""\nSMS Summary:
   Total Recipients: {summary.get("total", 0)}
   Sent: {summary.get("success", 0)}
   Failed: {summary.get("failed", 0)}
@@ -86,23 +87,56 @@ def send_sms_for_doc(docname):
   Unknown: {summary.get("unknown", 0)}
   Total Cost: KES {summary.get("cost_total", 0.0):.2f}
 """
-    doc.total_sent_sms = summary.get("total", 0)
-    doc.total_cost = summary.get("cost_total", 0.0)
-    doc.total_failed = summary.get("failed", 0)
+	doc.total_sent_sms = summary.get("total", 0)
+	doc.total_cost = summary.get("cost_total", 0.0)
+	doc.total_failed = summary.get("failed", 0)
+
+	doc.flags.ignore_validate_update_after_submit = True
+	doc.save(ignore_permissions=True)
+
+	return response
 
 
-    # ✅ Enable update after submit
-    doc.flags.ignore_validate_update_after_submit = True
-    doc.save(ignore_permissions=True)
+def workflow_send_sms_on_approval(doc, method=None):
+	if doc.workflow_state == "Approved" and doc.status != "Sent":
+		if doc.to_be_sent_on and doc.to_be_sent_on > now_datetime():
+			doc.status = "Scheduled"
+		doc.submit()
 
-    return response
-# Only Send SMS if Workflow has been fully approved
 
-def workflow_send_sms_on_approval (doc, method = None):
+@frappe.whitelist()
+def get_filterable_fields(doctype_name):
+	"""Return fields from a doctype that can be used as filters."""
+	frappe.has_permission("SMS Contact Mapping", throw=True)
 
-    if doc.workflow_state == "Approved" and doc.status != "Sent":
-        # Check if scheduled
-        if doc.to_be_sent_on and doc.to_be_sent_on > now_datetime():
-            doc.status = "Scheduled"
+	meta = frappe.get_meta(doctype_name)
+	result = []
 
-        doc.submit()                    
+	for field in meta.fields:
+		if field.fieldname in SYSTEM_FIELDS:
+			continue
+		if field.fieldtype not in FILTERABLE_FIELDTYPES:
+			continue
+
+		entry = {
+			"fieldname": field.fieldname,
+			"label": field.label or field.fieldname,
+			"fieldtype": field.fieldtype,
+			"options": field.options or "",
+		}
+
+		if field.fieldtype == "Table MultiSelect" and field.options:
+			# For Table MultiSelect, find the link doctype in the child table
+			try:
+				child_meta = frappe.get_meta(field.options)
+				for cf in child_meta.fields:
+					if cf.fieldtype == "Link" and cf.fieldname != "parent":
+						entry["options"] = field.options
+						entry["link_doctype"] = cf.options
+						break
+			except Exception:
+				pass
+
+		result.append(entry)
+
+	return result
