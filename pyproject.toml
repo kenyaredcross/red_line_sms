@@ -20,6 +20,12 @@ build-backend = "flit_core.buildapi"
 [tool.bench.dev-dependencies]
 # package_name = "~=1.1.0"
 
+# The Frappe versions this app is known to run on. Without this block bench
+# cannot work out compatibility and refuses to install the app at all:
+# "Could not find a compatible Frappe version in pyproject.toml".
+[tool.bench.frappe-dependencies]
+frappe = ">=15.0.0,<16.0.0"
+
 [tool.ruff]
 line-length = 110
 target-version = "py310"
